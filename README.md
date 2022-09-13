@@ -59,12 +59,10 @@ The FlowRunner provides you with methods that enables you to perform the followi
 - The persistence layer of the FlowService. Once again, and following up on the observations in the section above, unless doing any custom made developments (mainly for querying) and changes to core logic, no direct access should be needed at this level.
 
 ## How does this all tie togheter
-- Leverage the features of the ```FlowRunner``` to coordinate and instruct ```FlowTemplate``` executions. Sticking to the usage of the ```FlowRunner``` will give cover most of the cases. You can also use the features from the ```FlowService``` to query the current status of the Flow running engine.  You shall not need to touch the ```FlowRepository``` unless building new features for the ```FlowService``` or in case you need to perform specific queries suited to your needs.
-But that falls already in the realm of custom developments and further extending the library which diverges out of the scope of this first version.
+- Leverage the features of the ```FlowRunner``` to coordinate and instruct ```FlowTemplate``` executions. Sticking to the usage of the ```FlowRunner``` will cover most of the cases you need for basic usage. You can also use the features from the ```FlowService``` to query the current status of the Flow running engine. You shall not need to touch the ```FlowRepository``` unless building new features for the ```FlowService``` or in case you need to perform specific queries suited to your needs.
+That falls in the realm of custom developments and further extending the library which diverges out of the scope of this first version.
 
-- From the members names of the main Entity classes it's quite straightforward to understand their usage.
-
-- In case there is some uncertainty on the purpose and goal of certain fields please refer to Unit/Integration tests under the ```tests``` folder in order to clarify their usage.
+- From the members names of the main Entity classes it should be quite straightforward to understand their usage. In case there is some uncertainty on the purpose and goal of certain fields please refer to the Unit/Integration tests under the ```tests``` folder in order to clarify their usage.
 
 # Development topics
 ## Pre-requisites 

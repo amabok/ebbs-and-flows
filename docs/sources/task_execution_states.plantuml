@@ -1,0 +1,14 @@
+@startuml Task Execution States
+
+RUNNING: The Task is currently running.
+RUNNING --> FAILED
+RUNNING --> SUCCEEDED
+
+FAILED: The Task Execution is Failed.
+FAILED: It's possible to re-run a failed Task.
+FAILED --> [*]
+
+SUCCEEDED: Final state of a Task Execution.
+SUCCEEDED --> [*]
+
+@enduml

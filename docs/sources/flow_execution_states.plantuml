@@ -1,0 +1,26 @@
+@startuml Flow Execution States
+
+SCHEDULED: Flow Template Execution scheduled to be run.
+[*] --> CREATED
+SCHEDULED --> RUNNING
+
+CREATED: Flow Template Execution created.
+CREATED --> SCHEDULED
+
+
+RUNNING: The Flow Template is currently running.
+RUNNING --> FAILED
+RUNNING --> SUCCEEDED
+
+FAILED: The Flow Template is Failed.
+FAILED: It's possible to retry/resume execution.
+FAILED --> RESCHEDULED
+FAILED --> [*]
+
+RESCHEDULED: A State that marks new scheduling after failure.
+RESCHEDULED -> RUNNING
+
+SUCCEEDED: Final state of a Flow Execution.
+SUCCEEDED --> [*]
+
+@enduml

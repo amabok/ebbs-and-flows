@@ -1,5 +1,8 @@
 ### Python ###
 
+#Ignore the local db files (Sqlite)
+*.db
+
 #Ignore the virtual environment
 /development/
 

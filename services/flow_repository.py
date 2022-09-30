@@ -1,10 +1,16 @@
+from re import S
 from sqlite3 import Error
 import sqlite3
 
-from model.flow import ExecutionContext, FlowExecution, FlowStatus, TaskExecution, TaskStatus
-from services.flow_service import PersistenceMode
+from model.flow import ExecutionContext, FlowExecution, FlowStatus, PersistenceMode, TaskExecution, TaskStatus
 
 class FlowRepository:
+    current_db_name = None
+    db_names = {
+        PersistenceMode.TRANSIENT : ":memory:",
+        PersistenceMode.PERSISTENT : "flow_store.db"
+    }
+
     connection = None
 
     """
@@ -55,6 +61,9 @@ class FlowRepository:
                     WITH min_row_id AS (SELECT MIN(rowid) AS min FROM flow_executions WHERE status = ?)
                     SELECT * FROM flow_executions, min_row_id WHERE rowid = min_row_id.min
                     """
+    delete_all_flow_data_query = """
+                    DELETE FROM flow_executions
+                    """
 
     """
     TASK QUERIES
@@ -67,15 +76,29 @@ class FlowRepository:
     select_flow_task_execution_history_query = """
                     SELECT * FROM task_executions WHERE flow_execution_id = ? ORDER BY rowid
                     """
+    
+    delete_all_task_data_query = """
+                    DELETE FROM task_executions
+                    """
 
-    def __init__(self, persistence: PersistenceMode):
+    def __init__(self, persistence_mode: PersistenceMode):
         try:
-            db_name = ":memory:" if persistence is PersistenceMode.TRANSIENT else "flows.db"
-            self.connection = sqlite3.connect(db_name)
+            self.current_db_name = self.db_names.get(persistence_mode)
+            
+            if(self.current_db_name is None):
+                raise ValueError(f"There is no configured database name for ${persistence_mode} persistence mode")
+
+            self.connection = sqlite3.connect(self.current_db_name)
             self.create_schema()
         except Error as error:
-            raise Exception()
+            raise Exception("Error connecting to database")
     
+    def refresh(self):
+        try:
+            self.connection = sqlite3.connect(self.current_db_name)
+        except Error as error:
+            raise Exception("Error refreshing connection")
+
     #TODO substitute for a proper sql file load
     def create_schema(self):
         try:
@@ -84,6 +107,15 @@ class FlowRepository:
             cursor.execute(self.create_task_table_query)
         except Error as error:
             raise Exception(error)
+
+    def clear_storage(self):
+        cursor = self.connection.cursor()
+
+        cursor.execute(self.delete_all_task_data_query)
+        cursor.execute(self.delete_all_flow_data_query)
+
+        cursor.close()
+        self.connection.commit()
 
     """
     FLOWS
@@ -183,7 +215,7 @@ class FlowMapper:
         return (model.execution_id, model.execution_step, model.status.name, model.template_name, model.current_task_index, execution_context_json, model.timestamp)
 
     @staticmethod
-    def to_model(dao: tuple[int,int,str,str,int,str]) -> FlowExecution:
+    def to_model(dao: tuple[int,int,str,str,int,str,int]) -> FlowExecution:
         fe = FlowExecution()
         fe.execution_id = dao[0]
         fe.execution_step = dao[1]
@@ -201,7 +233,7 @@ class TaskMapper:
         return (model.flow_execution_id, model.flow_execution_step, model.status.name, model.output, model.timestamp)
 
     @staticmethod
-    def to_model(dao: tuple[int,int,str,str]) -> TaskExecution:
+    def to_model(dao: tuple[int,int,str,str,int]) -> TaskExecution:
 
         te = TaskExecution()
         te.flow_execution_id = dao[0]

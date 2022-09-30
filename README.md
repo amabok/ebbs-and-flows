@@ -19,12 +19,12 @@ In the first case we say that the Task executed with Success (TaskStatus.SUCCEED
 
 
 ### Execution Context
-The current state of the flow execution is captured in the ```ExecutionContext```. This entity holds all the data that traverses a flow execution. 
-The ExecutionContext allows the consumers to add pieces of data that might be of global shared interest for the flow execution. The data is identified by an unique name. If one tries to add an already existing entry with the same name and Error will be raised.
+The current state of the flow execution is captured in the ```ExecutionContext```. This entity holds all  relevant pieces of data that traverses through a flow execution. 
+The ExecutionContext allows storage and retrieval of Python Objects that are relevant pieces of data of shared interest for the flow execution steps (the Tasks). These pieces of data are identified by an unique name. If one tries to add an already existing entry with the same identifier a ValueError will be raised.
 
 ![Tasks](/docs/images/execution_context.png)
 
-Each task takes an ExecutionContext as input and must return an ExecutionContext as output. The input ExecutionContext should not be modified and the Task should return a novel ExecutionContext object in the output containing the necessary data objects that a specific task might create. It's also acceptable that a specific task doesn't create new pieces of data in the output ExecutionContext. It's a good practice that a copy of the input ExecutionContext is returned in the output.
+Each task takes an ExecutionContext as input and must return an ExecutionContext as output. The input ExecutionContext should not be modified and the Task should return a novel ExecutionContext object in the output containing the necessary data objects that a specific task might create. It's also acceptable that a specific task doesn't create new pieces of data in the output ExecutionContext. It's good practice that a copy of the input ExecutionContext is returned in the output.
 
 ### Flow, Flow Template and Flow Execution
 Flows are really not an entity in the library but they representation is encapsulated in what we call a ```FlowTemplate```. In order to run a Flow one can instantiate a ```FlowTemplate``` and proceed to add Task instances in order to build your Flow logic.

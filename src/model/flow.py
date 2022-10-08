@@ -117,8 +117,7 @@ class FlowTemplate:
         self.tasks = []
 
         self.integrity_checker = FlowTemplateIntegrityChecker(self.tasks)
-        
-    #TODO: also verify if the outputs match/re-define any of the inputs
+
     def add_task(self, task: Task) -> None:
         self.integrity_checker.verify_tasks_integrity(task)
         self.tasks.append(task)

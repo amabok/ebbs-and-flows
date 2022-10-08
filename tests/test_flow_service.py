@@ -10,7 +10,6 @@ class TestFlowService:
     def before_tests(self):
         self.subject = FlowService(PersistenceMode.TRANSIENT)
     
-
     def test_get_non_existent_flow(self):
         # Given
         non_existent_flow_id = 666

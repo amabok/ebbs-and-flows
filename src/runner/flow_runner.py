@@ -44,12 +44,10 @@ class FlowRunner:
             
             if (post_task_execution.status == TaskStatus.FAILED):
                 target_flow_status = FlowStatus.FAILED
-                target_task_status = TaskStatus.FAILED
                 can_run = False
                 
             if (post_task_execution.status == TaskStatus.SUCCEEDED):
                 target_flow_status = FlowStatus.RUNNING
-                target_task_status = TaskStatus.SUCCEEDED
                 can_run = True
 
             # Check if flow is over
@@ -90,7 +88,6 @@ class FlowRunner:
             output_execution_context = task.run(input_execution_context)
         except Exception:
             # TODO - catch the exception message
-            print("Kaboom")
             output = "EXCEPTION MESSAGE - TODO"
         
         #TODO: support a case for miss-behaved Task() subclasses that don't return

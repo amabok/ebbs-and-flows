@@ -17,32 +17,6 @@ class FlowRepository:
     connection = None
 
     """
-    SCHEMA CREATION QUERIES
-    """
-    create_flow_table_query = """
-                                CREATE TABLE IF NOT EXISTS flow_executions(
-                                        execution_id integer NOT NULL,
-                                        execution_step integer NOT NULL,
-                                        status text,
-                                        template_name text,
-                                        current_task_index integer,
-                                        execution_context text,
-                                        timestamp integer,
-                                        PRIMARY KEY(execution_id, execution_step)
-                                        )
-                                """
-    create_task_table_query = """
-                              CREATE TABLE IF NOT EXISTS task_executions(
-                                        flow_execution_id integer,
-                                        flow_execution_step integer,
-                                        status text,
-                                        output text,
-                                        timestamp integer,
-                                        FOREIGN KEY (flow_execution_id, flow_execution_step) REFERENCES flow_executions(execution_id, execution_step)
-                              )
-                              """
-    
-    """
     FLOW QUERIES
     """
     select_current_execution_id_query = """
@@ -90,14 +64,11 @@ class FlowRepository:
             
         if(current_db_name is None):
             raise ValueError(f"There is no configured database name for ${persistence_mode} persistence mode")
-        
-        print(current_db_name)
+
         return cls(current_db_name)
 
     def __init__(self, storage_file_name: str):
         self.current_db_name = storage_file_name
-
-        print(self.current_db_name)
 
         try:
             self.connection = sqlite3.connect(self.current_db_name)
@@ -113,12 +84,17 @@ class FlowRepository:
             message = f"Error refreshing connection: '{self.__extract_error_message(error)}'"
             raise Exception(message)
 
-    #TODO substitute for a proper sql file load
     def create_schema(self):
         try:
             cursor = self.connection.cursor()
-            cursor.execute(self.create_flow_table_query)
-            cursor.execute(self.create_task_table_query)
+
+            with open('.\\src\\repositories\\schema.sql', 'r', encoding='utf8') as schema_definition:
+                
+                #print(schema_definition.read())
+                cursor.executescript(schema_definition.read())
+
+            #cursor.execute(self.create_flow_table_query)
+            #cursor.execute(self.create_task_table_query)
         except Error as error:
             message = f"Error creating data schema: '{self.__extract_error_message(error)}'"
             raise Exception(message)

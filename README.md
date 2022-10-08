@@ -1,4 +1,4 @@
-# Ebbs and flows
+# Ebbs and Flows
 <img src="./docs/images/ebbs-and-flows-sv-screenshot.jpg" width="250"/>
 
 A simple library for running linear flows of tasks with persistence, failsafe and retries/re-runs in mind.
@@ -8,7 +8,7 @@ In Ebbs And Flows everything revolves around the following Entities that you can
 
 ### Task and TaskExecution
 The Task is the minimum building block of the Ebbs and Flows library. It's here that the code - the powerhouse part of the flow - is executed. Tasks implement a single method called ```run``` that either return an ```ExecutionContext``` holding some overall execution state and results (more on that later) or throw an exception instead. The ```output``` member of the ```TaskExecution``` entity will hold detailed information on the reasons behind the nature of the failure of the Task.
-Task classes implementations should ideally not hold any state as their instances are shared between every ```FlowTemplate``` instance more on that on [the Flow section](#flow-flow-template-and-flow-execution). 
+Task classes implementations should ideally not hold any state as their instances are shared between every ```FlowTemplate``` instance. More detail on that can be found on the p[the Flow section](#flow-flow-template-and-flow-execution). 
 
 ![Tasks](/docs/images/tasks.png)
 

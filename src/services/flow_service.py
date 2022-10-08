@@ -1,8 +1,7 @@
 import copy
-from enum import Enum
 import time
-from model.flow import ExecutionContext, FlowExecution, FlowStatus, PersistenceMode, TaskExecution, TaskStatus
-from services.flow_repository import FlowRepository
+from src.model.flow import ExecutionContext, FlowExecution, FlowStatus, PersistenceMode, TaskExecution, TaskStatus
+from src.repositories import flow_repository
 
 class FlowService:
     flow_repository = None
@@ -16,7 +15,10 @@ class FlowService:
     }
 
     def __init__(self, persistence: PersistenceMode):
-        self.flow_repository = FlowRepository(persistence)
+        if(persistence is PersistenceMode.PERSISTENT):
+            self.flow_repository = flow_repository.default_persistent_instance
+        else:
+            self.flow_repository = flow_repository.FlowRepository.from_persistence_mode(persistence)
 
     """
     FLOWS
@@ -121,3 +123,5 @@ class FlowService:
     def get_flow_task_execution_history(self, flow_execution_id: int) -> list[TaskExecution]:
         flow = self.get_flow_execution(flow_execution_id)
         return self.flow_repository.get_flow_task_execution_history(flow_execution_id)
+
+default_persistent_instance = FlowService(PersistenceMode.PERSISTENT)

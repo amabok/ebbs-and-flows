@@ -1,6 +1,4 @@
-from re import sub
-from typing import ByteString
-from model.flow import ExecutionContext, TaskStatus
+from src.model.flow import ExecutionContext, TaskStatus
 from tests.task_helper import FailingTask, RoundRobinTask, SuccessfulTask
 import pytest
 

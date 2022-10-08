@@ -44,19 +44,83 @@ class TaskStatus(Enum):
     FAILED = 2
     SUCCEEDED = 3
 
+class TaskDataItem():
+    key: str = None
+    type: type = None
+
+    def __init__(self, key:str, typ: type):
+        self.key = key
+        self.typ = typ
+    
+    def __eq__(self, __o: object) -> bool:
+        return type(__o) == type(self) and self.key == __o.key and self.typ == __o.typ
+
+    def __repr__(self) -> str:
+        return f"'{self.key}',{self.typ}"
+
+#TODO: How to make it an abstract class so that we can enforce method implementation
 class Task:
     def run(self, context: ExecutionContext) -> ExecutionContext:
-        pass
+        return ExecutionContext()
+
+    def inputs(self) -> list[TaskDataItem]:
+        return []
+
+    def outputs(self) -> list[TaskDataItem]:
+        return []
+
+class FlowTemplateIntegrityChecker:
+    tasks: list[Task]
+    task_data_items: list[TaskDataItem]
+    
+    def __init__(self, tasks: list[Task]):
+        self.tasks = tasks
+        self.task_data_items = []
+
+    #TODO: implement and call before run
+    def verify_can_be_started(self, start_execution_context: ExecutionContext) ->bool:
+        return False
+    
+    def verify_tasks_integrity(self, task: Task) -> bool:
+        # If we are the first task we add all of the items
+        if(len(self.tasks) == 0):
+            for input_item in task.inputs():
+                self.task_data_items.append(input_item)
+
+        # If we aren't the first task we are going to check if we have our inputs in the current 'bag' of task_data_items
+        # AKA: can_task_be_run
+        if(len(self.tasks) > 0):
+            for input_item in task.inputs():
+                if(input_item not in self.task_data_items):
+                    raise ValueError(f"Task {task} input {input_item} can't be sourced in the current flow")
+
+            # We are going to check if we re-define/overwrite any of the input or outputs of another previous task
+            # AKA: does_start_redefine_input_outputs
+            for output_item in task.outputs():
+                if(output_item in self.task_data_items):
+                    raise ValueError(f"Task {task} input {output_item} re-defines one existing Flow Data input or output data_item")
+
+        # Add outputs to the 'bag' of task_data_items
+        for output_item in task.outputs():
+                self.task_data_items.append(output_item)
+
+        return True
 
 class FlowTemplate:
     name: str
     tasks: list[Task]
 
+    integrity_checker: FlowTemplateIntegrityChecker
+
     def __init__(self, name):
         self.name = name
         self.tasks = []
 
+        self.integrity_checker = FlowTemplateIntegrityChecker(self.tasks)
+        
+    #TODO: also verify if the outputs match/re-define any of the inputs
     def add_task(self, task: Task) -> None:
+        self.integrity_checker.verify_tasks_integrity(task)
         self.tasks.append(task)
 
     def get_task(self, index: int) -> Task:

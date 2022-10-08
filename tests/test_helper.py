@@ -1,6 +1,6 @@
-from model.flow import ExecutionContext, FlowStatus, FlowTemplate, TaskStatus
-from runner.flow_runner import FlowRunner
-from tests.task_helper import FailingTask, RoundRobinTask, SuccessfulTask
+from src.model.flow import ExecutionContext, FlowStatus, FlowTemplate, TaskStatus
+from src.runner.flow_runner import FlowRunner
+from tests.task_helper import RoundRobinTask, SuccessfulTask
 
 class TestHelper():
 

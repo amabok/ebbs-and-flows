@@ -1,10 +1,10 @@
-from model.flow import ExecutionContext, FlowExecution, FlowStatus, FlowTemplate, Task, TaskExecution, TaskStatus
-from services.flow_service import FlowService
+from src.model.flow import ExecutionContext, FlowExecution, FlowStatus, FlowTemplate, Task, TaskExecution, TaskStatus
+from src.services import flow_service
 
 class FlowRunner:
     flow_templates: list[FlowTemplate]
 
-    def __init__(self, flow_service: FlowService):
+    def __init__(self, flow_service: flow_service.FlowService):
         self.flow_templates = {}
         self.flow_service = flow_service
 
@@ -103,3 +103,5 @@ class FlowRunner:
         te.output = output
         
         return (te, output_execution_context)
+
+default_instance = FlowRunner(flow_service.default_persistent_instance)

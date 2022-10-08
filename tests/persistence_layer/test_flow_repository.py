@@ -1,5 +1,5 @@
-from model.flow import ExecutionContext, FlowExecution, FlowStatus, PersistenceMode
-from services.flow_repository import FlowRepository
+from src.model.flow import ExecutionContext, FlowExecution, FlowStatus, PersistenceMode
+from src.repositories.flow_repository import FlowRepository
 import pytest
 
 class TestPersistentFlowRepository:
@@ -7,7 +7,7 @@ class TestPersistentFlowRepository:
 
     @pytest.fixture(autouse=True)
     def before_tests(self):
-        self.subject = FlowRepository(PersistenceMode.PERSISTENT)
+        self.subject: FlowRepository = FlowRepository.from_persistence_mode(PersistenceMode.PERSISTENT)
         #TODO: remove from here after fixing the clearing problem between each test
         self.subject.clear_storage()
 

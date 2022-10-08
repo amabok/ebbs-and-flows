@@ -1,6 +1,6 @@
-from model.flow import ExecutionContext, FlowStatus, FlowTemplate, PersistenceMode, Task, TaskStatus
-from runner.flow_runner import FlowRunner
-from services.flow_service import FlowService
+from src.model.flow import ExecutionContext, FlowStatus, FlowTemplate, PersistenceMode, Task, TaskStatus
+from src.runner.flow_runner import FlowRunner
+from src.services.flow_service import FlowService
 import pytest
 
 from tests.task_helper import FailingTask, SuccessfulTask

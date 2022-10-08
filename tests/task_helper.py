@@ -1,17 +1,16 @@
-from multiprocessing.sharedctypes import Value
-from model.flow import ExecutionContext, TaskStatus
+from src.model.flow import ExecutionContext, Task, TaskStatus
 
-class SuccessfulTask:
+class SuccessfulTask(Task):
     def run(self, execution_context: ExecutionContext) -> ExecutionContext:
         ec = ExecutionContext() 
         ec.set("some_output", "OK")
         return ec
 
-class FailingTask:
+class FailingTask(Task):
     def run(self, execution_context: ExecutionContext) -> ExecutionContext:
         raise ValueError("Oh nooo!")
 
-class RoundRobinTask:
+class RoundRobinTask(Task):
     run_count: int
     initial_task_status: TaskStatus
     reverse: dict

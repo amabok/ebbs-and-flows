@@ -1,6 +1,6 @@
 from logging import exception
-from model.flow import ExecutionContext, FlowStatus, PersistenceMode
-from services.flow_service import FlowService
+from src.model.flow import ExecutionContext, FlowStatus, PersistenceMode
+from src.services.flow_service import FlowService
 import pytest
 
 class TestFlowService:
@@ -29,7 +29,7 @@ class TestFlowService:
         execution_context = ExecutionContext()
         flow = self.subject.create_flow_execution("template", execution_context)
 
-        # When
+        # When/Then
         with pytest.raises(ValueError) as exc:
             self.subject.update_flow_status(flow.execution_id, FlowStatus.FAILED, execution_context)
 
